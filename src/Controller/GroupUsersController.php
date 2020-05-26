@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Group;
+use App\Entity\GroupUsers;
 use App\Entity\User;
-use App\Form\GroupType;
+use App\Form\GroupUsersType;
 
-use App\Repository\GroupRepository;
+use App\Repository\GroupUsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,20 +15,17 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class GroupController
+ * Class GroupUsersController
  * @package App\Controller
  * @Route("/group",name="group_")
  */
-class GroupController extends AbstractController
+class GroupUsersController extends AbstractController
 {
   private $groupRepository;
   private $entityManager;
 
-  /**
-   * UserController constructor.
-   * @param $userRepository
-   */
-  public function __construct(EntityManagerInterface $entityManager, GroupRepository $groupRepository)
+
+  public function __construct(EntityManagerInterface $entityManager, GroupUsersRepository $groupRepository)
   {
     $this->groupRepository = $groupRepository;
     $this->entityManager = $entityManager;
@@ -48,12 +45,12 @@ class GroupController extends AbstractController
      * @Route("/new/{id}",name="new")
     */
     public function new ($id,Request $request){
-      $group = new Group();
-      $form = $this->createForm(GroupType::class,$group);
+      $group = new GroupUsers();
+      $form = $this->createForm(GroupUsersType::class,$group);
       $form->handleRequest($request);
       if($form->isSubmitted() && $form->isValid()){
          $group->setCreatorId($id);
-      //   dump($group);die;
+        // dump($group->getUsers()[0]);die;
         $this->entityManager->persist($group);
         $this->entityManager->flush();
 

@@ -36,8 +36,7 @@ class UserType extends AbstractType
             'choices' => [
               'Gestion' => [
                 'Admin' => 'admin',
-                'Back-end ' => 'Back-end',
-                'Front-end' => 'Front-end',
+                'user ' => 'user',
 
               ],
             ],

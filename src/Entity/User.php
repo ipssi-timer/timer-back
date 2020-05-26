@@ -77,7 +77,7 @@ class User implements UserInterface
     private $pseudo;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Group", inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\GroupUsers", inversedBy="users")
      */
     private $userGroups;
 
@@ -171,14 +171,6 @@ class User implements UserInterface
             $this->roles = ['ROLE_ADMIN'];
             return $this;
         }
-        if($roles=='com'){
-            $this->roles = ['ROLE_COM'];
-            return $this;
-        }
-        if($roles=='reviewer'){
-            $this->roles = ['ROLE_REVIEWER'];
-            return $this;
-        }
         $this->roles = ['ROLE_USER'];
         return $this;
     }
@@ -219,14 +211,14 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Group[]
+     * @return Collection|GroupUsers[]
      */
     public function getUserGroups(): Collection
     {
         return $this->userGroups;
     }
 
-    public function addUserGroup(Group $userGroup): self
+    public function addUserGroup(GroupUsers $userGroup): self
     {
         if (!$this->userGroups->contains($userGroup)) {
             $this->userGroups[] = $userGroup;
@@ -235,7 +227,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function removeUserGroup(Group $userGroup): self
+    public function removeUserGroup(GroupUsers $userGroup): self
     {
         if ($this->userGroups->contains($userGroup)) {
             $this->userGroups->removeElement($userGroup);
