@@ -12,7 +12,8 @@ use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields={"email"}, message="It looks like your already have an account!")
+ * @UniqueEntity(fields={"email"}, message="ce mail existe !")
+ * @UniqueEntity(fields={"pseudo"}, message="Ce pseudo est déja pris !")
  */
 
 class User implements UserInterface
@@ -68,6 +69,25 @@ class User implements UserInterface
      * )
      */
     private $password;
+
+
+
+    /**
+     * @ORM\Column(type="string", length=255,unique=true)
+     */
+    private $pseudo;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\GroupUsers", inversedBy="users")
+     */
+    private $userGroups;
+
+    public function __construct()
+    {
+        $this->userGroups = new ArrayCollection();
+    }
+
+
 
 
 
@@ -152,14 +172,6 @@ class User implements UserInterface
             $this->roles = ['ROLE_ADMIN'];
             return $this;
         }
-        if($roles=='com'){
-            $this->roles = ['ROLE_COM'];
-            return $this;
-        }
-        if($roles=='reviewer'){
-            $this->roles = ['ROLE_REVIEWER'];
-            return $this;
-        }
         $this->roles = ['ROLE_USER'];
         return $this;
     }
@@ -185,5 +197,46 @@ class User implements UserInterface
     {
         // TODO: Implement eraseCredentials() method.
     }
+
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GroupUsers[]
+     */
+    public function getUserGroups(): Collection
+    {
+        return $this->userGroups;
+    }
+
+    public function addUserGroup(GroupUsers $userGroup): self
+    {
+        if (!$this->userGroups->contains($userGroup)) {
+            $this->userGroups[] = $userGroup;
+        }
+
+        return $this;
+    }
+
+    public function removeUserGroup(GroupUsers $userGroup): self
+    {
+        if ($this->userGroups->contains($userGroup)) {
+            $this->userGroups->removeElement($userGroup);
+        }
+
+        return $this;
+    }
+
+
 
 }
