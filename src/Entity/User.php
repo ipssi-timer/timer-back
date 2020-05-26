@@ -71,6 +71,25 @@ class User implements UserInterface
 
 
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $pseudo;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Group", inversedBy="users")
+     */
+    private $userGroups;
+
+    public function __construct()
+    {
+        $this->userGroups = new ArrayCollection();
+    }
+
+
+
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -185,5 +204,46 @@ class User implements UserInterface
     {
         // TODO: Implement eraseCredentials() method.
     }
+
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Group[]
+     */
+    public function getUserGroups(): Collection
+    {
+        return $this->userGroups;
+    }
+
+    public function addUserGroup(Group $userGroup): self
+    {
+        if (!$this->userGroups->contains($userGroup)) {
+            $this->userGroups[] = $userGroup;
+        }
+
+        return $this;
+    }
+
+    public function removeUserGroup(Group $userGroup): self
+    {
+        if ($this->userGroups->contains($userGroup)) {
+            $this->userGroups->removeElement($userGroup);
+        }
+
+        return $this;
+    }
+
+
 
 }

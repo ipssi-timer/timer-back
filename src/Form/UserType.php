@@ -21,6 +21,7 @@ class UserType extends AbstractType
       if( empty($options['data']->getId()) ) {
 
         $builder
+          ->add('pseudo',TextType::class)
           ->add('firstName', TextType::class)
           ->add('lastName', TextType::class)
           ->add('birthDate', DateType::class)
@@ -44,6 +45,7 @@ class UserType extends AbstractType
           ->add('signUp', SubmitType::class);
       }else{
         $builder
+          ->add('pseudo',TextType::class)
           ->add('firstName', TextType::class)
           ->add('lastName', TextType::class)
           ->add('birthDate', DateType::class)
