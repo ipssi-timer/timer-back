@@ -16,6 +16,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\FormTypeInterface;
+
 class UserController extends AbstractController
 {
 

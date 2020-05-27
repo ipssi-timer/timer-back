@@ -33,9 +33,15 @@ class GroupUsers
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="projectgroup", orphanRemoval=true)
+     */
+    private $projects;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
 
@@ -92,6 +98,37 @@ class GroupUsers
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
             $user->removeUserGroup($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Project[]
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Project $project): self
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects[] = $project;
+            $project->setProjectgroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Project $project): self
+    {
+        if ($this->projects->contains($project)) {
+            $this->projects->removeElement($project);
+            // set the owning side to null (unless already changed)
+            if ($project->getProjectgroup() === $this) {
+                $project->setProjectgroup(null);
+            }
         }
 
         return $this;
