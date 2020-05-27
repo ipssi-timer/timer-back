@@ -32,3 +32,13 @@ services:
             - web
         volumes:
             - .:/app
+
+    pma:
+        image: phpmyadmin/phpmyadmin
+        container_name: pma_project
+        environment:
+            - PMA_HOST=db
+        ports:
+            - 8080:80
+        depends_on:
+            - db
