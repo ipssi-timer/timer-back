@@ -16,6 +16,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\FormTypeInterface;
+
+/**
+ * @Route("/user",name="user_")
+ */
+
 class UserController extends AbstractController
 {
 
@@ -44,7 +49,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user_list", name="user")
+     * @Route("/list", name="list")
      */
     public function usersList()
     {
@@ -57,7 +62,7 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/create_user", name="form")
+     * @Route("/new", name="new")
      */
     public function newAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -74,7 +79,7 @@ class UserController extends AbstractController
 
             $this->addFlash('success', "new user has been created");
 
-            return $this->redirectToRoute('user');
+            return $this->redirectToRoute('user_list');
         }
 
         return $this->render('user/new.html.twig', [
@@ -84,7 +89,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/delete_user/{id}", name="user_delete")
+     * @Route("/delete_user/{id}", name="delete")
      * @IsGranted("ROLE_ADMIN")
      * @ParamConverter("user", options={"mapping"={"id"="id"}})
      */
@@ -93,12 +98,12 @@ class UserController extends AbstractController
         $entityManager->remove($user);
         $entityManager->flush();
         $this->addFlash('success', "the user has been deleted");
-        return $this->redirectToRoute('user');
+        return $this->redirectToRoute('user_list');
 
     }
 
    /**
-    * @Route("/update_user/{id}"),name="update_user")
+    * @Route("/update/{id}"),name="update")
     * @ParamConverter("user", options={"mapping"={"id"="id"}})
     */
    public function update(Request $request,User $user,UserPasswordEncoderInterface $passwordEncoder){
@@ -114,7 +119,7 @@ class UserController extends AbstractController
 
        $this->addFlash('success', "user has been updated");
 
-       return $this->redirectToRoute('user');
+       return $this->redirectToRoute('user_list');
      }
 
      return $this->render('user/new.html.twig', [

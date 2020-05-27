@@ -12,7 +12,8 @@ use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields={"email"}, message="It looks like your already have an account!")
+ * @UniqueEntity(fields={"email"}, message="ce mail existe !")
+ * @UniqueEntity(fields={"pseudo"}, message="Ce pseudo est déja pris !")
  */
 
 class User implements UserInterface
@@ -72,7 +73,7 @@ class User implements UserInterface
 
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,unique=true)
      */
     private $pseudo;
 

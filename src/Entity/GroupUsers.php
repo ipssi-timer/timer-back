@@ -79,10 +79,10 @@ class GroupUsers
 
     public function addUser(User $user): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->addUserGroup($this);
-        }
+        $this->users[] = $user;
+        dump($this->users);
+        $user->addUserGroup($this);
+
 
         return $this;
     }
