@@ -6,11 +6,19 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+    <a href="{{ path('user_list') }}">Liste utilisateurs</a>
+    <a href="{{ path('group_list') }}">Liste des groupes</a>
+    <a href="{{ path('project_list') }}">Liste des projets</a>
+    {% if app.user %}
+        <li>
+            <a href="{{ path('app_logout') }}">Déconnexion</a>
+        </li>
+    {% else  %}
+        <li>
+            <a href="{{ path('app_login') }}">Se connecter</a>
+        </li>
+    {% endif %}
         {% block body %}{% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
-    <a href="{{ path('user_list') }}">user list</a>
-    <a href="{{ path('group_list') }}">group list</a>
-
-
 </html>

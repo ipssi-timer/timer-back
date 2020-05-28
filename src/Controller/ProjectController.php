@@ -10,6 +10,7 @@ use App\Form\ProjectType;
 use App\Repository\GroupUsersRepository;
 use App\Repository\ProjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,11 +19,10 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class ProjectController
  * @package App\Controller
- * @Route("/project",name="project")
+ * @Route("/project",name="project_")
  */
 class ProjectController extends AbstractController
 {
-
     private $projectRepository;
     private $entityManager;
 
@@ -30,26 +30,28 @@ class ProjectController extends AbstractController
      * projectController constructor.
      * @param $groupUsersRepository
      */
-    public function __construct(EntityManagerInterface $entityManager, GroupUsersRepository $groupUsersRepository)
+    public function __construct(EntityManagerInterface $entityManager, GroupUsersRepository $groupUsersRepository, ProjectRepository $projectRepository)
     {
         $this->groupUserRepository = $groupUsersRepository;
+        $this->projectRepository = $projectRepository;
         $this->entityManager = $entityManager;
     }
 
     /**
-     * @Route("/list", name="listproject")
+     * @Route("/list", name="list")
      */
-    public function index()
+    public function listProject ()
     {
-        return $this->render('group/index.html.twig', [
-            'controller_name' => 'ProjectController',
+        $projects = $this->projectRepository->findAll();
+        return $this->render('project/index.html.twig', [
+            'projects' => $projects,
         ]);
     }
 
     /**
-     * @Route("/new/{id}",name="newproject")
+     * @Route("/new",name="new")
      */
-    public function newProject ($id,Request $request)
+    public function newProject (Request $request)
 
     {
 
@@ -57,27 +59,27 @@ class ProjectController extends AbstractController
         $form = $this->createForm(ProjectType::class, $project);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-            $project->setCreatorId($id);
+            $project->setCreatorId($this->getUser());
 
             $this->entityManager->persist($project);
             $this->entityManager->flush();
 
             $this->addFlash('success', "Le projet a bien été créé !");
 
-            return $this->redirectToRoute('projectlist');
+            return $this->redirectToRoute('project_list');
         }
 
-        return $this->render('project/new.html.twig', [
+        return $this->render('project/form.html.twig', [
             'form' => $form->createView(),
         ]);
 
     }
 
     /**
-     * @Route("/update/{id}", name="updateproject")
+     * @Route("/update/{id}", name="update")
      */
 
-    public function updateProject ($id, Project $project, Request $request)
+    public function updateProject (Project $project, Request $request)
 
     {
         $form = $this->createForm(ProjectType::class, $project);
@@ -89,20 +91,23 @@ class ProjectController extends AbstractController
 
             $this->addFlash('success', "Le projet a bien été modifié !");
 
-            return $this->redirectToRoute('projectlist');
+            return $this->redirectToRoute('project_list');
         }
 
-        return $this->render('project/new.html.twig', [
+        return $this->render('project/form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/update/{id}", name="deleteproject")
+     * @Route("/delete/{id}", name="delete")
      */
 
-    public function deletepProject ($id, Project $project)
+    public function deleteProject (Project $project, Request $request)
     {
-
+        $this->entityManager->remove($project);
+        $this->entityManager->flush();
+        $this->addFlash('success', "Le projet a bien été supprimé !");
+        return $this->redirectToRoute('project_list');
     }
 }

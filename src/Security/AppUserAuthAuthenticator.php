@@ -92,7 +92,7 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('profile'));
+        return new RedirectResponse($this->urlGenerator->generate('user_profile'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
