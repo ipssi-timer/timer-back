@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +39,18 @@ class Project
      * @ORM\JoinColumn(nullable=false)
      */
     private $creatorId;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="project")
+     */
+    private $entries;
+
+    public function __construct()
+    {
+        $this->entries = new ArrayCollection();
+    }
+
+
 
     public function getId(): ?int
     {
@@ -90,4 +104,36 @@ class Project
 
         return $this;
     }
+
+    /**
+     * @return Collection|Entry[]
+     */
+    public function getEntries(): Collection
+    {
+        return $this->entries;
+    }
+
+    public function addEntry(Entry $entry): self
+    {
+        if (!$this->entries->contains($entry)) {
+            $this->entries[] = $entry;
+            $entry->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEntry(Entry $entry): self
+    {
+        if ($this->entries->contains($entry)) {
+            $this->entries->removeElement($entry);
+            // set the owning side to null (unless already changed)
+            if ($entry->getProject() === $this) {
+                $entry->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

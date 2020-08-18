@@ -87,10 +87,17 @@ class User implements UserInterface
      */
     private $projects;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="user")
+     */
+    private $entries;
+
+
     public function __construct()
     {
         $this->userGroups = new ArrayCollection();
         $this->projects = new ArrayCollection();
+        $this->entries = new ArrayCollection();
     }
 
 
@@ -273,6 +280,38 @@ class User implements UserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection|Entry[]
+     */
+    public function getEntries(): Collection
+    {
+        return $this->entries;
+    }
+
+    public function addEntry(Entry $entry): self
+    {
+        if (!$this->entries->contains($entry)) {
+            $this->entries[] = $entry;
+            $entry->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEntry(Entry $entry): self
+    {
+        if ($this->entries->contains($entry)) {
+            $this->entries->removeElement($entry);
+            // set the owning side to null (unless already changed)
+            if ($entry->getUser() === $this) {
+                $entry->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
 
 
 
