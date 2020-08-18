@@ -44,9 +44,15 @@ class APIGroupUserController extends AbstractController
    */
   public function new ($name){
       $group = new GroupUsers();
+    if(empty($this->getUser())){
+      $data = $this->serializer->serialize(array('message'=>'not connected'), 'json');
+      return new Response($data, 503, [
+        'Content-Type' => 'application/json'
+      ]);
+    }
       $group->setCreatorId($this->getUser()->getId());
       $group->setName($name);
-      $this->em->persist();
+      $this->em->persist($group);
       $this->em->flush();
       $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
         return new Response($data, 200, [

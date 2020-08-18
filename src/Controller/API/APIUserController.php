@@ -42,7 +42,7 @@ class APIUserController extends AbstractController
     }
 
   /**
-   * @Route("api/newUser/{firstName}/{lastName}/pseudo/{birthDate}/{email}/{password}", name="new",methods={"GET"})
+   * @Route("api/newUser/{firstName}/{lastName}/{pseudo}/{birthDate}/{email}/{password}/", name="new",methods={"GET"})
    */
   public function newAction($firstName,$lastName,$pseudo,$birthDate,$email,$password, UserPasswordEncoderInterface $passwordEncoder)
   {
@@ -85,7 +85,7 @@ class APIUserController extends AbstractController
   }
 
   /**
-   * @Route("api/updateUser/password/{id}/{password}"),name="update_password",methods={"PUT"})
+   * @Route("api/updateUser/password/{id}/{password}",name="update_password",methods={"PUT"})
    */
   public function update($id,$password,UserPasswordEncoderInterface $passwordEncoder){
       $user = $this->em->getRepository(User::class)->find($id);
@@ -106,7 +106,7 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/pseudo/{id}/{pseudo}"),name="update_pseudo",methods={"PUT"})
+   * @Route("api/updateUser/pseudo/{id}/{pseudo}",name="update_pseudo",methods={"PUT"})
    */
   public function updatePseudo($id,$pseudo){
     $user = $this->em->getRepository(User::class)->find($id);
@@ -126,7 +126,7 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/email/{id}/{email}"),name="update_email",methods={"PUT"})
+   * @Route("api/updateUser/email/{id}/{email}",name="update_email",methods={"PUT"})
    */
   public function updateEmail($id,$email){
     $user = $this->em->getRepository(User::class)->find($id);
@@ -146,7 +146,7 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/firstName/{id}/{firstName}"),name="update_firstName",methods={"PUT"})
+   * @Route("api/updateUser/firstName/{id}/{firstName}",name="update_firstName",methods={"PUT"})
    */
   public function updateFirstName($id,$firstName){
     $user = $this->em->getRepository(User::class)->find($id);
@@ -166,7 +166,7 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/lastName/{id}/{lastName}"),name="update_lastName",methods={"PUT"})
+   * @Route("api/updateUser/lastName/{id}/{lastName}",name="update_lastName",methods={"PUT"})
    */
   public function updateLastName($id,$lastName){
     $user = $this->em->getRepository(User::class)->find($id);
@@ -187,7 +187,7 @@ class APIUserController extends AbstractController
   }
 
   /**
-   * @Route("api/updateUser/birthDate/{id}/{birthDate}"),name="update_birthDate",methods={"PUT"})
+   * @Route("api/updateUser/birthDate/{id}/{birthDate}",name="update_birthDate",methods={"PUT"})
    */
   public function updatebirthDate($id,$birthDate){
     $user = $this->em->getRepository(User::class)->find($id);
@@ -206,5 +206,7 @@ class APIUserController extends AbstractController
     ]);
 
   }
+
+
 
 }
