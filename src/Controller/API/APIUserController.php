@@ -42,10 +42,11 @@ class APIUserController extends AbstractController
     }
 
   /**
-   * @Route("api/newUser/{firstName}/{lastName}/{pseudo}/{birthDate}/{email}/{password}/", name="new",methods={"GET"})
+   * @Route("api/newUser/{firstName}/{lastName}/{pseudo}/{birthDate}/{email}/{password}/", name="new",methods={"POST"})
    */
   public function newAction($firstName,$lastName,$pseudo,$birthDate,$email,$password, UserPasswordEncoderInterface $passwordEncoder)
   {
+
 
       $user = new User();
       $user->setEmail($email);
