@@ -246,7 +246,6 @@ class User implements UserInterface
         return $this;
     }
 
-git
     /**
      * @return Collection|Entry[]
      */
