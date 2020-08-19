@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\String_;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProjectRepository")
@@ -96,11 +97,15 @@ class Project
         return $this->creator;
     }
 
+<<<<<<< HEAD
     public function setCreator(string $creator): self
+=======
+    public function setCreator( $creator): string
+>>>>>>> bbec2347ed5f54d90f315d44ca152299b6b1efb3
     {
         $this->creator = $creator;
 
-        return $this;
+        return $this->getCreator();
     }
 
     /**
