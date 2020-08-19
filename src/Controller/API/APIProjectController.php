@@ -48,6 +48,7 @@ class APIProjectController extends AbstractController
 
         $groupUser = $this->em->getRepository(GroupUsers::class)->find($groupId);
 
+
         $project->setName($name);
         $project->setDescription($description);
         $project->setProjectgroup($groupUser);
