@@ -42,7 +42,7 @@ class APIUserController extends AbstractController
     }
 
   /**
-   * @Route("api/newUser/{firstName}/{lastName}/{pseudo}/{birthDate}/{email}/{password}/", name="new",methods={"POST"})
+   * @Route("api/newUser/{firstName}/{lastName}/{pseudo}/{birthDate}/{email}/{password}/", name="new",methods={"GET"})
    */
   public function newAction($firstName,$lastName,$pseudo,$birthDate,$email,$password, UserPasswordEncoderInterface $passwordEncoder)
   {
@@ -52,10 +52,12 @@ class APIUserController extends AbstractController
       $user->setEmail($email);
       $user->setLastName($lastName);
       $user->setFirstName($firstName);
-      $user->setBirthDate($birthDate);
+
+      $user->setBirthDate(\DateTime::createFromFormat('d-m-Y', $birthDate));
       $user->setPseudo($pseudo);
       $password = $passwordEncoder->encodePassword($user,$password);
       $user->setPassword($password);
+      $user->setRoles('ROLE_USER');
       $this->em->persist($user);
       $this->em->flush();
 
@@ -157,7 +159,7 @@ class APIUserController extends AbstractController
         'Content-Type' => 'application/json'
       ]);
     }
-    $user->setPassword($firstName);
+    $user->setFirstName($firstName);
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -177,7 +179,7 @@ class APIUserController extends AbstractController
         'Content-Type' => 'application/json'
       ]);
     }
-    $user->setPassword($lastName);
+    $user->setLastName($lastName);
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -198,7 +200,7 @@ class APIUserController extends AbstractController
         'Content-Type' => 'application/json'
       ]);
     }
-    $user->setPassword($birthDate);
+      $user->setBirthDate(\DateTime::createFromFormat('d-m-Y', $birthDate));
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
