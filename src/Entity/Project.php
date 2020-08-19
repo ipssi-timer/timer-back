@@ -96,7 +96,7 @@ class Project
         return $this->creator;
     }
 
-    public function setcreator(User $creator): self
+    public function setCreator(User $creator): self
     {
         $this->creator = $creator;
 
