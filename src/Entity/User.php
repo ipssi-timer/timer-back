@@ -82,10 +82,7 @@ class User implements UserInterface
      */
     private $userGroups;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="creatorId", orphanRemoval=true)
-     */
-    private $projects;
+
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="user")
@@ -96,7 +93,6 @@ class User implements UserInterface
     public function __construct()
     {
         $this->userGroups = new ArrayCollection();
-        $this->projects = new ArrayCollection();
         $this->entries = new ArrayCollection();
     }
 
@@ -250,37 +246,7 @@ class User implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|Project[]
-     */
-    public function getProjects(): Collection
-    {
-        return $this->projects;
-    }
-
-    public function addProject(Project $project): self
-    {
-        if (!$this->projects->contains($project)) {
-            $this->projects[] = $project;
-            $project->setCreator($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProject(Project $project): self
-    {
-        if ($this->projects->contains($project)) {
-            $this->projects->removeElement($project);
-            // set the owning side to null (unless already changed)
-            if ($project->getCreator() === $this) {
-                $project->setCreator(null);
-            }
-        }
-
-        return $this;
-    }
-
+git
     /**
      * @return Collection|Entry[]
      */
