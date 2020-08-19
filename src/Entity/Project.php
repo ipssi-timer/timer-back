@@ -35,10 +35,9 @@ class Project
     private $projectgroup;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="projects")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255)
      */
-    private $creatorId;
+    private $creator;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="project")
@@ -49,7 +48,6 @@ class Project
     {
         $this->entries = new ArrayCollection();
     }
-
 
 
     public function getId(): ?int
@@ -93,14 +91,14 @@ class Project
         return $this;
     }
 
-    public function getCreatorId(): ?User
+    public function getCreator(): ?User
     {
-        return $this->creatorId;
+        return $this->creator;
     }
 
-    public function setCreatorId(?User $creatorId): self
+    public function setcreator(User $creator): self
     {
-        $this->creatorId = $creatorId;
+        $this->creator = $creator;
 
         return $this;
     }

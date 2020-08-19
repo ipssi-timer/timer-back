@@ -262,7 +262,7 @@ class User implements UserInterface
     {
         if (!$this->projects->contains($project)) {
             $this->projects[] = $project;
-            $project->setCreatorId($this);
+            $project->setCreator($this);
         }
 
         return $this;
@@ -273,8 +273,8 @@ class User implements UserInterface
         if ($this->projects->contains($project)) {
             $this->projects->removeElement($project);
             // set the owning side to null (unless already changed)
-            if ($project->getCreatorId() === $this) {
-                $project->setCreatorId(null);
+            if ($project->getCreator() === $this) {
+                $project->setCreator(null);
             }
         }
 
