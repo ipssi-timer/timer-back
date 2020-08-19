@@ -48,12 +48,12 @@ class APIProjectController extends AbstractController
 
         $groupUser = $this->em->getRepository(GroupUsers::class)->find($groupId);
 
-        $this->getUser()->addProject($project);
+
         $project->setName($name);
         $project->setDescription($description);
         $project->setProjectgroup($groupUser);
+        $project->setCreator($this->getUser()->getId());
         $this->em->persist($project);
-        $this->em->persist($this->getUser());
         $this->em->flush();
         $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
         return new Response($data, 200, [

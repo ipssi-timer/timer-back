@@ -70,8 +70,6 @@ class User implements UserInterface
      */
     private $password;
 
-
-
     /**
      * @ORM\Column(type="string", length=255,unique=true)
      */
@@ -83,7 +81,7 @@ class User implements UserInterface
     private $userGroups;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="creatorId", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="creator", orphanRemoval=true)
      */
     private $projects;
 
@@ -99,8 +97,6 @@ class User implements UserInterface
         $this->projects = new ArrayCollection();
         $this->entries = new ArrayCollection();
     }
-
-
 
 
 
