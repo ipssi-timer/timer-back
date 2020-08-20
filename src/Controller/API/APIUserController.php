@@ -11,17 +11,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Swagger\Annotations as SWG;
 
 class APIUserController extends AbstractController
 {
   private $em;
   private $serializer;
+ private $validator;
 
-
-  public function __construct(EntityManagerInterface $entityManager,SerializerInterface $serializer){
+  public function __construct(EntityManagerInterface $entityManager,SerializerInterface $serializer,ValidatorInterface $validator){
 
     $this->em = $entityManager;
     $this->serializer = $serializer;
+    $this->validator = $validator ;
 
   }
     /**
@@ -42,10 +45,57 @@ class APIUserController extends AbstractController
     }
 
   /**
-   * @Route("api/newUser/{firstName}/{lastName}/{pseudo}/{birthDate}/{email}/{password}/", name="new",methods={"GET"})
+   * @Route("api/v1/user/new", name="new",methods={"POST"})
+   *  @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="birthDate",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="firstName",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="lastName",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="email",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="pseudo",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="password",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function newAction($firstName,$lastName,$pseudo,$birthDate,$email,$password, UserPasswordEncoderInterface $passwordEncoder)
+  public function newAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
   {
+      $firstName = $request->query->get('firstName');
+      $lastName = $request->query->get('lastName');
+      $pseudo = $request->query->get('pseudo');
+      $password = $request->query->get('password');
+      $email = $request->query->get('email');
+      $birthDate = $request->query->get('birthDate');
+
 
 
       $user = new User();
@@ -58,6 +108,14 @@ class APIUserController extends AbstractController
       $password = $passwordEncoder->encodePassword($user,$password);
       $user->setPassword($password);
       $user->setRoles('ROLE_USER');
+
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
       $this->em->persist($user);
       $this->em->flush();
 
@@ -68,10 +126,21 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/delete_user/{id}", name="delete",methods={"DELETE"})
+   * @Route("api/v1/user/delete", name="delete",methods={"DELETE"})
+   *@SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function delete ($id, EntityManagerInterface $entityManager)
+  public function delete (Request $request, EntityManagerInterface $entityManager)
   {
+      $id = $request->query->get('id');
     $user = $this->em->getRepository(User::class)->find($id);
     if(empty($user)){
       $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
@@ -79,6 +148,7 @@ class APIUserController extends AbstractController
         'Content-Type' => 'application/json'
       ]);
     }
+
     $entityManager->remove($user);
     $entityManager->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -88,9 +158,28 @@ class APIUserController extends AbstractController
   }
 
   /**
-   * @Route("api/updateUser/password/{id}/{password}",name="update_password",methods={"PUT"})
+   * @Route("api/v1/user/update",name="update_password",methods={"PUT"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="password",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function update($id,$password,UserPasswordEncoderInterface $passwordEncoder){
+  public function update(Request $request,UserPasswordEncoderInterface $passwordEncoder)
+  {
+      $id = $request->query->get('id');
+      $password = $request->query->get('password');
       $user = $this->em->getRepository(User::class)->find($id);
      if(empty($user)){
         $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
@@ -100,6 +189,13 @@ class APIUserController extends AbstractController
       }
       $password = $passwordEncoder->encodePassword($user, $password);
       $user->setPassword($password);
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
       $this->em->persist($user);
       $this->em->flush();
       $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -109,9 +205,28 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/pseudo/{id}/{pseudo}",name="update_pseudo",methods={"PUT"})
+   * @Route("api/v1/user/update/pseudo",name="update_pseudo",methods={"PUT"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="pseudo",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function updatePseudo($id,$pseudo){
+  public function updatePseudo(Request $request){
+      $id = $request->query->get('id');
+      $pseudo = $request->query->get('pseudo');
+
     $user = $this->em->getRepository(User::class)->find($id);
     if(empty($user)){
       $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
@@ -120,6 +235,13 @@ class APIUserController extends AbstractController
       ]);
     }
     $user->setPseudo($pseudo);
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -129,10 +251,30 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/email/{id}/{email}",name="update_email",methods={"PUT"})
+   * @Route("api/v1/user/update/email",name="update_email",methods={"PUT"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="email",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function updateEmail($id,$email){
-    $user = $this->em->getRepository(User::class)->find($id);
+  public function updateEmail(Request $request){
+      $id = $request->query->get('id');
+
+      $email = $request->query->get('email');
+
+      $user = $this->em->getRepository(User::class)->find($id);
     if(empty($user)){
       $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
       return new Response($data, 404, [
@@ -140,6 +282,13 @@ class APIUserController extends AbstractController
       ]);
     }
     $user->setEmail($email);
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -149,10 +298,28 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/firstName/{id}/{firstName}",name="update_firstName",methods={"PUT"})
+   * @Route("api/v1/user/update/firstName",name="update_firstName",methods={"PUT"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="firstName",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function updateFirstName($id,$firstName){
-    $user = $this->em->getRepository(User::class)->find($id);
+  public function updateFirstName(Request $request,$id,$firstName){
+      $id = $request->query->get('id');
+      $firstName = $request->query->get('firstName');
+      $user = $this->em->getRepository(User::class)->find($id);
     if(empty($user)){
       $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
       return new Response($data, 404, [
@@ -160,6 +327,13 @@ class APIUserController extends AbstractController
       ]);
     }
     $user->setFirstName($firstName);
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -169,10 +343,28 @@ class APIUserController extends AbstractController
 
   }
   /**
-   * @Route("api/updateUser/lastName/{id}/{lastName}",name="update_lastName",methods={"PUT"})
+   * @Route("api/v1/user/update/lastName",name="update_lastName",methods={"PUT"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="lastName",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function updateLastName($id,$lastName){
-    $user = $this->em->getRepository(User::class)->find($id);
+  public function updateLastName(Request $request){
+      $id = $request->query->get('id');
+      $lastName = $request->query->get('lastName');
+      $user = $this->em->getRepository(User::class)->find($id);
     if(empty($user)){
       $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
       return new Response($data, 404, [
@@ -180,6 +372,13 @@ class APIUserController extends AbstractController
       ]);
     }
     $user->setLastName($lastName);
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
@@ -190,10 +389,28 @@ class APIUserController extends AbstractController
   }
 
   /**
-   * @Route("api/updateUser/birthDate/{id}/{birthDate}",name="update_birthDate",methods={"PUT"})
+   * @Route("api/v1/user/update/birthDate",name="update_birthDate",methods={"PUT"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="birthDate",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function updatebirthDate($id,$birthDate){
-    $user = $this->em->getRepository(User::class)->find($id);
+  public function updatebirthDate(Request $request){
+      $id = $request->query->get('id');
+      $birthDate = $request->query->get('birthDate');
+      $user = $this->em->getRepository(User::class)->find($id);
     if(empty($user)){
       $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
       return new Response($data, 404, [
@@ -201,6 +418,13 @@ class APIUserController extends AbstractController
       ]);
     }
       $user->setBirthDate(\DateTime::createFromFormat('d-m-Y', $birthDate));
+      $error = $this->validator->validate($user);
+      if(count($error)){
+          $error = $this->serializer->serialize($error,'json');
+          return new Response($error, 500, [
+              'Content-Type' => 'application/json'
+          ]);
+      }
     $this->em->persist($user);
     $this->em->flush();
     $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
