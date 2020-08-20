@@ -70,8 +70,6 @@ class User implements UserInterface
      */
     private $password;
 
-
-
     /**
      * @ORM\Column(type="string", length=255,unique=true)
      */
@@ -82,18 +80,19 @@ class User implements UserInterface
      */
     private $userGroups;
 
+
+
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="creatorId", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="user")
      */
-    private $projects;
+    private $entries;
+
 
     public function __construct()
     {
         $this->userGroups = new ArrayCollection();
-        $this->projects = new ArrayCollection();
+        $this->entries = new ArrayCollection();
     }
-
-
 
 
 
@@ -244,35 +243,36 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Project[]
+     * @return Collection|Entry[]
      */
-    public function getProjects(): Collection
+    public function getEntries(): Collection
     {
-        return $this->projects;
+        return $this->entries;
     }
 
-    public function addProject(Project $project): self
+    public function addEntry(Entry $entry): self
     {
-        if (!$this->projects->contains($project)) {
-            $this->projects[] = $project;
-            $project->setCreatorId($this);
+        if (!$this->entries->contains($entry)) {
+            $this->entries[] = $entry;
+            $entry->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeProject(Project $project): self
+    public function removeEntry(Entry $entry): self
     {
-        if ($this->projects->contains($project)) {
-            $this->projects->removeElement($project);
+        if ($this->entries->contains($entry)) {
+            $this->entries->removeElement($entry);
             // set the owning side to null (unless already changed)
-            if ($project->getCreatorId() === $this) {
-                $project->setCreatorId(null);
+            if ($entry->getUser() === $this) {
+                $entry->setUser(null);
             }
         }
 
         return $this;
     }
+
 
 
 

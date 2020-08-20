@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,10 +35,20 @@ class Project
     private $projectgroup;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="projects")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255)
      */
-    private $creatorId;
+    private $creator;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="project")
+     */
+    private $entries;
+
+    public function __construct()
+    {
+        $this->entries = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -79,15 +91,47 @@ class Project
         return $this;
     }
 
-    public function getCreatorId(): ?User
+    public function getCreator(): ?string
     {
-        return $this->creatorId;
+        return $this->creator;
     }
 
-    public function setCreatorId(?User $creatorId): self
+    public function setCreator(string $creator): self
     {
-        $this->creatorId = $creatorId;
+        $this->creator = $creator;
 
         return $this;
     }
+
+    /**
+     * @return Collection|Entry[]
+     */
+    public function getEntries(): Collection
+    {
+        return $this->entries;
+    }
+
+    public function addEntry(Entry $entry): self
+    {
+        if (!$this->entries->contains($entry)) {
+            $this->entries[] = $entry;
+            $entry->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEntry(Entry $entry): self
+    {
+        if ($this->entries->contains($entry)) {
+            $this->entries->removeElement($entry);
+            // set the owning side to null (unless already changed)
+            if ($entry->getProject() === $this) {
+                $entry->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
 }
