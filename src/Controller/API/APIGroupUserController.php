@@ -27,7 +27,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-     * @Route("/api/group/user/{id}", name="api_group_user", methods={"GET"})
+     * @Route("/api/groupUser/get/{id}", name="groupUser_get", methods={"GET"})
      */
     public function index($id,Response $request)
     {
@@ -40,7 +40,7 @@ class APIGroupUserController extends AbstractController
     }
 
   /**
-   * @Route("api/newGroup/{name}",name="new_group", methods={"GET"})
+   * @Route("api/groupUser/new/{name}",name="groupUser_new", methods={"GET"})
    */
   public function new ($name){
       $group = new GroupUsers();
@@ -62,7 +62,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-   * @Route("api/deleteGroup/{id}", name="delete_group", methods={"DELETE"})
+   * @Route("api/groupUser/delete/{id}", name="groupUser_delete", methods={"DELETE"})
    */
   public function delete ($id )
   {
@@ -83,7 +83,7 @@ class APIGroupUserController extends AbstractController
 
 
   /**
-   * @Route("api/updateGroupName/{id}/{name}",name="update_name",methods={"POST"})
+   * @Route("api/groupUser/updateName/{id}/{name}",name="groupUser_update_name",methods={"POST"})
    */
   public function updateName($id,$name){
     $group = $this->em->getRepository(GroupUsers::class)->find($id);
@@ -98,7 +98,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-   * @Route("api/updateGroupCreator/{id}/{creator_id}",name="update_creator",methods={"PUT"})
+   * @Route("api/groupUser/updateCreator/{id}/{creator_id}",name="groupUser_update_creator",methods={"PUT"})
    */
   public function updateCreator($id,$creator_id){
     $group = $this->em->getRepository(GroupUsers::class)->find($id);
@@ -112,7 +112,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-   * @Route("api/AddUserupdateGroup/{id}/{user_id}",name="update_add_user",methods={"PATCH"})
+   * @Route("api/groupUser/addUser/{id}/{user_id}",name="groupUser_add_user",methods={"PATCH"})
    */
   public function newUser($id,$user_id){
     $group = $this->em->getRepository(GroupUsers::class)->find($id);
@@ -127,7 +127,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-   * @Route("api/updateGroup/deleteUSer/{id}/{user_id}",name="delete_user",methods={"DELETE"})
+   * @Route("api/groupUser/deleteUSer/{id}/{user_id}",name="groupUser_delete_user",methods={"DELETE"})
    */
   public function deleteUser($id,$user_id){
     $group = $this->em->getRepository(GroupUsers::class)->find($id);

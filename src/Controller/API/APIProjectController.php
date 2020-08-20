@@ -28,7 +28,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
-     * @Route("/api/project/{id}", name="api_project", methods={"GET"})
+     * @Route("/api/project/get/{id}", name="api_project_get", methods={"GET"})
      */
     public function index($id,Response $request)
     {
@@ -41,7 +41,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
-     * @Route("api/newProject/{name}/{description}/{groupId}",name="new_project", methods={"GET"})
+     * @Route("api/project/new/{name}/{description}/{groupId}",name="project_new", methods={"GET"})
      */
     public function new ($name, $description, $groupId){
         $project = new Project();
@@ -62,7 +62,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
-     * @Route("api/deleteProject/{id}", name="delete_project", methods={"DELETE"})
+     * @Route("api/project/delete/{id}", name="project_delete", methods={"DELETE"})
      */
     public function delete ($id)
     {
@@ -78,7 +78,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
-     * @Route("api/updateProjectName/{id}/{name}",name="updateProject_name",methods={"POST"})
+     * @Route("api/project/updateName/{id}/{name}",name="project_update_name",methods={"POST"})
      */
     public function updateProjectName($id,$name){
         $project = $this->em->getRepository(Project::class)->find($id);
@@ -89,7 +89,20 @@ class APIProjectController extends AbstractController
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
         ]);
+    }
 
+    /**
+     * @Route("api/project/updateDescription/{id}/{description}",name="project_update_description",methods={"POST"})
+     */
+    public function updateProjectDescription($id,$description){
+        $project = $this->em->getRepository(Project::class)->find($id);
+        $project->setName($description);
+        $this->em->persist($project);
+        $this->em->flush();
+        $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
     }
 
 }
