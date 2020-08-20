@@ -183,7 +183,7 @@ class APIUserController extends AbstractController
       $user = $this->em->getRepository(User::class)->find($id);
      if(empty($user)){
         $data = $this->serializer->serialize(array('message'=>'user not found'), 'json');
-        return new Response($data, 404, [
+        return new Response($data, 400, [
           'Content-Type' => 'application/json'
         ]);
       }
