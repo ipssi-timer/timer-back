@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Swagger\Annotations as SWG;
+
 
 class APIGroupUserController extends AbstractController
 {
@@ -27,10 +29,22 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-     * @Route("/api/groupUser/get/{id}", name="groupUser_get", methods={"GET"})
-     */
-    public function index($id,Response $request)
+   * @Route("/api/v1/group", name="groupUser_get", methods={"POST"})
+   *
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   */
+    public function index(Response $request)
     {
+          $id = $request->query->get('id');
           $group = $this->em->getRepository(GroupUsers::class)->find($id);
           $data = $this->serializer->serialize($group, 'json');
 
@@ -40,9 +54,21 @@ class APIGroupUserController extends AbstractController
     }
 
   /**
-   * @Route("api/groupUser/new/{name}",name="groupUser_new", methods={"GET"})
+   * @Route("api/v1/group/new",name="groupUser_new", methods={"POST"})
+   *
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="name",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function new ($name){
+  public function new (Request $request){
+      $name = $request->query->get('name');
       $group = new GroupUsers();
     if(empty($this->getUser())){
       $data = $this->serializer->serialize(array('message'=>'not connected'), 'json');
