@@ -88,10 +88,21 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
-   * @Route("api/groupUser/delete/{id}", name="groupUser_delete", methods={"DELETE"})
+   * @Route("api/v1/group/delete", name="groupUser_delete", methods={"DELETE"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
    */
-  public function delete ($id )
+  public function delete (Request $request)
   {
+    $id = $request->query->get('id');
     $group = $this->em->getRepository(GroupUsers::class)->find($id);
     if(empty($group)){
       $data = $this->serializer->serialize(array('message'=>'Empty Data'), 'json');
@@ -109,7 +120,23 @@ class APIGroupUserController extends AbstractController
 
 
   /**
-   * @Route("api/groupUser/updateName/{id}/{name}",name="groupUser_update_name",methods={"POST"})
+   * @Route("api/v1/group/updateName",name="groupUser_update_name",methods={"POST"})
+   * @SWG\Response(
+   *     response="200",
+   *     description="success",
+   *)
+   * @SWG\Parameter(
+   *     name="id",
+   *     type="integer",
+   *     in="query",
+   *     required=true,
+   * )
+   * @SWG\Parameter(
+   *     name="name",
+   *     type="string",
+   *     in="query",
+   *     required=true,
+   * )
    */
   public function updateName($id,$name){
     $group = $this->em->getRepository(GroupUsers::class)->find($id);
