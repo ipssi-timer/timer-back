@@ -2,6 +2,7 @@
 
 namespace App\Controller\API;
 
+use App\Entity\GroupUsers;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,7 +29,7 @@ class APIUserController extends AbstractController
 
   }
     /**
-     * @Route("/api/user", name="api_user",methods={"GET"})
+     * @Route("/api/v1/user", name="api_user",methods={"GET"})
      */
     public function index()
     {
@@ -38,7 +39,7 @@ class APIUserController extends AbstractController
           'Content-Type' => 'application/json'
         ]);
       }
-      $data = $this->serializer->serialize($this->getUser(), 'json');
+      $data = $this->serializer->serialize($this->getUser()->getId(), 'json');
       return new Response($data, 200, [
         'Content-Type' => 'application/json'
       ]);
@@ -147,6 +148,18 @@ class APIUserController extends AbstractController
       return new Response($data, 404, [
         'Content-Type' => 'application/json'
       ]);
+    }
+    $groups = $this->em->getRepository(GroupUsers::class)->findAll();
+    foreach ($groups as $group){
+        if ($group->getCreatorID() == $user->getId() && count($group->getUsers()) <= 1) {
+
+            $this->em->remove($group);
+            $this->em->persist($group);
+        }
+        if($group->getCreatorID() == $user->getId()  && count($group->getUsers())  > 1){
+                $group->setCreatorID($group->getUsers()[0]->getId());
+                $this->em->persist($group);
+        }
     }
 
     $entityManager->remove($user);

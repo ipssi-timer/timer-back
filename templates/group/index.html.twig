@@ -17,8 +17,12 @@
 
 
         <span>Group :</span>
-        <li>name : {{ group.getName }} <br>
+        <li>id : {{ group.id }} <br>
+            creator id : {{ group.creatorId }} <br>
+            name : {{ group.getName }} <br>
           membres : {% for user in  group.getUsers %}
+
+
             {{ user.pseudo  }}
             {%  if group.creatorId == user.id %}
               (ADMIN)
