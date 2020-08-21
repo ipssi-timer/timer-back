@@ -35,7 +35,7 @@ class Project
     private $projectgroup;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer")
      */
     private $creator;
 
@@ -91,12 +91,12 @@ class Project
         return $this;
     }
 
-    public function getCreator(): ?string
+    public function getCreator(): ?int
     {
         return $this->creator;
     }
 
-    public function setCreator(string $creator): self
+    public function setCreator(int $creator): self
     {
         $this->creator = $creator;
 
