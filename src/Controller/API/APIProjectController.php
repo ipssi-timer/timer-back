@@ -57,7 +57,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
-     * @Route("api/v1/project/new",name="project_new", methods={"POST"})
+     * @Route("api/v1/project/new",name="api_project_new", methods={"POST"})
      *
      * @SWG\Response(
      *     response="200",
