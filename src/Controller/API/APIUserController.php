@@ -11,23 +11,35 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Swagger\Annotations as SWG;
 
 class APIUserController extends AbstractController
 {
-  private $em;
-  private $serializer;
- private $validator;
+    private $em;
+    private $serializer;
+    private $validator;
+    private $encoders;
+    private $normalizers;
 
-  public function __construct(EntityManagerInterface $entityManager,SerializerInterface $serializer,ValidatorInterface $validator){
 
-    $this->em = $entityManager;
-    $this->serializer = $serializer;
-    $this->validator = $validator ;
 
-  }
+    public function __construct(EntityManagerInterface $entityManager,SerializerInterface $serializer,ValidatorInterface $validator){
+
+        $this->em = $entityManager;
+        $this->validator = $validator ;
+        $this->encoders = array(new XmlEncoder(), new JsonEncoder());
+        $this->normalizers = array(new ObjectNormalizer());
+        $this->serializer = new Serializer($this->normalizers, $this->encoders);
+
+
+
+    }
     /**
      * @Route("/api/v1/user", name="api_user",methods={"GET"})
      */
@@ -39,7 +51,10 @@ class APIUserController extends AbstractController
           'Content-Type' => 'application/json'
         ]);
       }
-      $data = $this->serializer->serialize($this->getUser()->getId(), 'json');
+      $data = $this->serializer->serialize($this->getUser(), 'json',[
+          'circular_reference_handler' => function ($object) {
+              return $object->getId();
+          }]);
       return new Response($data, 200, [
         'Content-Type' => 'application/json'
       ]);
@@ -97,12 +112,18 @@ class APIUserController extends AbstractController
       $email = $request->query->get('email');
       $birthDate = $request->query->get('birthDate');
 
-
+      if (!preg_match("/^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)\d{4}$/",$birthDate) ) {
+              $data = $this->serializer->serialize(array('message'=>'birthDate Invalide ! format accepté dd-mm-yyyy'), 'json');
+              return new Response($data, 200, [
+                'Content-Type' => 'application/json'
+              ]);
+      }
 
       $user = new User();
       $user->setEmail($email);
       $user->setLastName($lastName);
       $user->setFirstName($firstName);
+
 
       $user->setBirthDate(\DateTime::createFromFormat('d-m-Y', $birthDate));
       $user->setPseudo($pseudo);
