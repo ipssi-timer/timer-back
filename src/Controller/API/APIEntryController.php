@@ -28,6 +28,7 @@ class APIEntryController extends AbstractController
 
   }
     /**
+     * get one timer information
      * @Route("/api/v1/entry/index", name="a_p_i_entry",methods={"POST"})
      *  @SWG\Response(
      *     response="200",
@@ -39,6 +40,8 @@ class APIEntryController extends AbstractController
      *     in="query",
      *     required=true,
      * )
+     * @param Request $request
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -53,12 +56,14 @@ class APIEntryController extends AbstractController
     }
 
     /**
+     * get all user timers
      * @Route("/api/v1/entry/user/list", name="api_entry_list",methods={"POST"})
      *  @SWG\Response(
      *     response="200",
      *     description="success",
      *)
-
+     * @param Request $request
+     * @return Response
      */
     public function list(Request $request)
     {
@@ -72,6 +77,7 @@ class APIEntryController extends AbstractController
     }
 
     /**
+     * create new timer
      * @Route("api/v1/entry/new",name="api_entry",methods={"POST"})
         *  @SWG\Response(
         *     response="200",
@@ -95,6 +101,8 @@ class APIEntryController extends AbstractController
         *     in="query",
         *     required=true,
         * )
+     * @param Request $request
+     * @return Response
      */
     public function new(Request $request){
         $start = $this->em->query->get('start');
@@ -121,6 +129,7 @@ class APIEntryController extends AbstractController
 
 
     /**
+     * update timer end
      * @Route("api/v1/update/entry",name="api_update_entry",methods={"PUT"})
      *  @SWG\Response(
      *     response="200",
@@ -138,6 +147,8 @@ class APIEntryController extends AbstractController
      *     in="query",
      *     required=true,
      * )
+     * @param Request $request
+     * @return Response
      */
     public function updateEntry(Request $request){
 

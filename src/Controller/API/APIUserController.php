@@ -41,8 +41,12 @@ class APIUserController extends AbstractController
 
     }
     /**
-     * @Route("/api/v1/user", name="api_user",methods={"GET"})
+     * get actual user information
+     * @Route("/api/v1/user", name="api_user",methods={"POST"})
+     * @return Response
      */
+
+    // get actual user
     public function index()
     {
       if(empty($this->getUser())){
@@ -61,6 +65,7 @@ class APIUserController extends AbstractController
     }
 
   /**
+   * create new user
    * @Route("api/v1/user/new", name="new",methods={"POST"})
    *  @SWG\Response(
    *     response="200",
@@ -102,7 +107,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // create new user
   public function newAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
   {
       $firstName = $request->query->get('firstName');
@@ -148,6 +157,7 @@ class APIUserController extends AbstractController
 
   }
   /**
+   * delete user account
    * @Route("api/v1/user/delete", name="delete",methods={"DELETE"})
    *@SWG\Response(
    *     response="200",
@@ -159,7 +169,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // delete user
   public function delete (Request $request, EntityManagerInterface $entityManager)
   {
       $id = $request->query->get('id');
@@ -192,7 +206,8 @@ class APIUserController extends AbstractController
   }
 
   /**
-   * @Route("api/v1/user/update",name="update_password",methods={"PUT"})
+   * update user password
+   * @Route("api/v1/user/update/password",name="update_password",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
    *     description="success",
@@ -209,7 +224,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // update password
   public function update(Request $request,UserPasswordEncoderInterface $passwordEncoder)
   {
       $id = $request->query->get('id');
@@ -239,6 +258,7 @@ class APIUserController extends AbstractController
 
   }
   /**
+   * user update pseudo
    * @Route("api/v1/user/update/pseudo",name="update_pseudo",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
@@ -256,7 +276,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // update pseudo
   public function updatePseudo(Request $request){
       $id = $request->query->get('id');
       $pseudo = $request->query->get('pseudo');
@@ -285,6 +309,7 @@ class APIUserController extends AbstractController
 
   }
   /**
+   * update user email
    * @Route("api/v1/user/update/email",name="update_email",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
@@ -302,7 +327,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // update email
   public function updateEmail(Request $request){
       $id = $request->query->get('id');
 
@@ -332,6 +361,7 @@ class APIUserController extends AbstractController
 
   }
   /**
+   * update user firstName
    * @Route("api/v1/user/update/firstName",name="update_firstName",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
@@ -349,7 +379,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // update first name
   public function updateFirstName(Request $request,$id,$firstName){
       $id = $request->query->get('id');
       $firstName = $request->query->get('firstName');
@@ -377,6 +411,7 @@ class APIUserController extends AbstractController
 
   }
   /**
+   * update user lastName
    * @Route("api/v1/user/update/lastName",name="update_lastName",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
@@ -394,7 +429,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // update last name
   public function updateLastName(Request $request){
       $id = $request->query->get('id');
       $lastName = $request->query->get('lastName');
@@ -423,6 +462,7 @@ class APIUserController extends AbstractController
   }
 
   /**
+   * update user birthDate
    * @Route("api/v1/user/update/birthDate",name="update_birthDate",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
@@ -440,7 +480,11 @@ class APIUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // update birthDate
   public function updatebirthDate(Request $request){
       $id = $request->query->get('id');
       $birthDate = $request->query->get('birthDate');

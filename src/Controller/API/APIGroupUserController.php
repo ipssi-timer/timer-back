@@ -43,8 +43,10 @@ class APIGroupUserController extends AbstractController
     }
 
     /**
+     * get all groups
      * @Route("/api/v1/groups/list", name="group_list_get", methods={"POST"})
-     *
+     *@param Request $request
+     *@return Response
      */
     public function groupsList(Request $request)
     {
@@ -62,6 +64,7 @@ class APIGroupUserController extends AbstractController
 
 
     /**
+     * edit group
    * @Route("/api/v1/group/edit", name="groupUser_get", methods={"POST"})
    *
    * @SWG\Response(
@@ -74,6 +77,8 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+     * @param Request $request
+     * @return Response
    */
     public function index(Request $request)
     {
@@ -90,7 +95,10 @@ class APIGroupUserController extends AbstractController
     }
 
  /**
+  * get group users
    * @Route("/api/v1/group/user/list", name="group_user_list", methods={"POST"})
+  * @param Request $request
+  * @return Response
    */
     public function list(Request $request)
     {
@@ -107,6 +115,7 @@ class APIGroupUserController extends AbstractController
 
 
   /**
+   * create new group
    * @Route("api/v1/group/new",name="groupUser_new", methods={"POST"})
    *
    * @SWG\Response(
@@ -119,6 +128,8 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
   public function new (Request $request){
       $name = $request->query->get('name');
@@ -149,6 +160,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
+   * delete group
    * @Route("api/v1/group/delete", name="groupUser_delete", methods={"DELETE"})
    * @SWG\Response(
    *     response="200",
@@ -160,6 +172,8 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
   public function delete (Request $request)
   {
@@ -182,6 +196,7 @@ class APIGroupUserController extends AbstractController
 
 
   /**
+   * update group name
    * @Route("api/v1/group/update/name",name="groupUser_update_name",methods={"POST"})
    *  @SWG\Response(
    *     response="200",
@@ -199,6 +214,8 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
   public function updateName(Request $request){
     $id = $request->query->get('id');
@@ -222,6 +239,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
+   * update group creator
    * @Route("api/v1/group/update/creator",name="groupUser_update_creator",methods={"PUT"})
    * @SWG\Response(
    *     response="200",
@@ -239,8 +257,15 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+
+
   public function updateCreator(Request $request){
+
+
       $id = $request->query->get('id');
       $creator = $request->query->get('creator');
     $group = $this->em->getRepository(GroupUsers::class)->find($id);
@@ -274,6 +299,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
+   * add new user to a group
    * @Route("api/v1/group/add/user",name="groupUser_add_user",methods={"PATCH"})
    * @SWG\Response(
    *     response="200",
@@ -291,7 +317,11 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // add new user to group
   public function newUser(Request $request)
   {
     $id = $request->query->get('id');
@@ -315,6 +345,7 @@ class APIGroupUserController extends AbstractController
   }
 
   /**
+   * delete user from group
    * @Route("api/v1/group/delete/user",name="groupUser_delete_user",methods={"DELETE"})
    * @SWG\Response(
    *     response="200",
@@ -332,7 +363,11 @@ class APIGroupUserController extends AbstractController
    *     in="query",
    *     required=true,
    * )
+   * @param Request $request
+   * @return Response
    */
+
+  // delete user from group
   public function deleteUser(Request $request)
   {
     $id = $request->query->get('id');

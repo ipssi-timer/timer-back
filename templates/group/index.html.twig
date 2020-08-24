@@ -15,7 +15,6 @@
         <a href="{{ path('group_update',{'id':group.id}) }}">update</a>
 
 
-
         <span>Group :</span>
         <li>id : {{ group.id }} <br>
             creator id : {{ group.creatorId }} <br>
@@ -34,9 +33,6 @@
                         {% if project.id is defined  %}
 
                         {{ project.id  }}
-                            {%  if project.creator == app.user.id %}
-                                (ADMIN)
-                            {% endif %}
                             ---{{ project.name }}
                         {% endif %}
                         ---

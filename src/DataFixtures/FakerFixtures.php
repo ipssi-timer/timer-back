@@ -32,7 +32,7 @@ class FakerFixtures extends Fixture
 
 
             $group = new GroupUsers();
-            $group->setName($faker->name);
+            $group->setName($faker->colorName);
             $group->setCreatorId($user->getId());
             $group->addUser($user);
             $manager->persist($group);
@@ -41,7 +41,7 @@ class FakerFixtures extends Fixture
 
 
             $project = new Project();
-            $project->setName($faker->name);
+            $project->setName($faker->city);
             $project->setDescription($faker->title);
             $project->setCreator($user->getId());
             $group->addProject($project);
