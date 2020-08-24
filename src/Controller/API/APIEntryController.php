@@ -36,7 +36,7 @@ class APIEntryController extends AbstractController
 
     /**
      * Récupère une entrée (temps de travail)
-     * @Route("get", name="get",methods={"POST"})
+     * @Route("entry/get", name="get",methods={"POST"})
      * @SWG\Response(
      *     response="200",
      *     description="success",
