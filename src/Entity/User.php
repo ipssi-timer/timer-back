@@ -57,6 +57,11 @@ class User implements UserInterface
     private $createdAt;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    /**
      * @ORM\Column(type="simple_array")
      */
     private $roles;
@@ -78,7 +83,7 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\GroupUsers", inversedBy="users")
      */
-    private $userGroups;
+    private $groups;
 
 
 
@@ -90,7 +95,7 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->userGroups = new ArrayCollection();
+        $this->groups = new ArrayCollection();
         $this->entries = new ArrayCollection();
     }
 
@@ -109,7 +114,6 @@ class User implements UserInterface
     public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
-
         return $this;
     }
 
@@ -121,7 +125,6 @@ class User implements UserInterface
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
-
         return $this;
     }
 
@@ -133,7 +136,6 @@ class User implements UserInterface
     public function setBirthDate(\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
-
         return $this;
     }
 
@@ -145,7 +147,6 @@ class User implements UserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -156,6 +157,16 @@ class User implements UserInterface
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 
@@ -173,10 +184,11 @@ class User implements UserInterface
 
     public function setRoles(string $roles):self
     {
-        if($roles=='admin'){
+        if( 'admin' === $roles ){
             $this->roles = ['ROLE_ADMIN'];
             return $this;
         }
+
         $this->roles = ['ROLE_USER'];
         return $this;
     }
@@ -192,15 +204,15 @@ class User implements UserInterface
         return null;
     }
 
-
-    public function getUsername()
-    {
-        return $this->email;
-    }
-
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+
+    public function getUsername(): ?string
+    {
+        return $this->email;
     }
 
 
@@ -212,22 +224,22 @@ class User implements UserInterface
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
-
         return $this;
     }
 
     /**
      * @return Collection|GroupUsers[]
      */
-    public function getUserGroups(): Collection
+    public function getGroups(): Collection
     {
-        return $this->userGroups;
+        return $this->groups;
     }
 
-    public function addUserGroup(GroupUsers $userGroup): self
+    public function joinGroup(GroupUsers $group): self
     {
-        if (!$this->userGroups->contains($userGroup)) {
-            $this->userGroups[] = $userGroup;
+        // TODO : Condition(s) pour rejoindre un groupe
+        if (!$this->groups->contains($group)) {
+            $this->groups[] = $group;
         }
 
         return $this;
@@ -264,7 +276,7 @@ class User implements UserInterface
     {
         if ($this->entries->contains($entry)) {
             $this->entries->removeElement($entry);
-            // set the owning side to null (unless already changed)
+
             if ($entry->getUser() === $this) {
                 $entry->setUser(null);
             }
