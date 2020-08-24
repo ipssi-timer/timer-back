@@ -262,7 +262,7 @@ class User implements UserInterface
         return $this->entries;
     }
 
-    public function addEntry(Entry $entry): self
+    public function attachEntry(Entry $entry): self
     {
         if (!$this->entries->contains($entry)) {
             $this->entries[] = $entry;

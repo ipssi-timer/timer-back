@@ -14,23 +14,30 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Swagger\Annotations as SWG;
 
+
+/**
+ * @Route("/api/v1/", requirements={"_locale": "en|es|fr"}, name="api_entry_")
+ */
 class APIEntryController extends AbstractController
 {
     private $em;
     private $serializer;
     private $validator;
 
-  public function __construct(EntityManagerInterface $entityManager,SerializerInterface $serializer,ValidatorInterface $validator){
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator
+    ) {
+        $this->em = $entityManager;
+        $this->serializer = $serializer;
+        $this->validator = $validator;
+    }
 
-    $this->em = $entityManager;
-    $this->serializer = $serializer;
-    $this->validator = $validator ;
-
-  }
     /**
-     * get one timer information
-     * @Route("/api/v1/entry/index", name="a_p_i_entry",methods={"POST"})
-     *  @SWG\Response(
+     * Récupère une entrée (temps de travail)
+     * @Route("get", name="get",methods={"POST"})
+     * @SWG\Response(
      *     response="200",
      *     description="success",
      *)
@@ -40,98 +47,108 @@ class APIEntryController extends AbstractController
      *     in="query",
      *     required=true,
      * )
-     * @param Request $request
+     * @param  Request  $request
      * @return Response
      */
-    public function index(Request $request)
+    public function getOne( Request $request )
     {
-        $entry = $this->em->getRepository(Entry::class)->find($request->query->get('entry_id'));
-        $data = $this->serializer->serialize($entry, 'json',[
-            'circular_reference_handler' => function ($object) {
+        $entry = $this->em->getRepository( Entry::class )
+            ->find( $request->query->get( 'entry_id' ) );
+
+        $data = $this->serializer->serialize( $entry, 'json', [
+            'circular_reference_handler' => function( $object ) {
                 return $object->getId();
-            }]);
-        return new Response($data, 200, [
-            'Content-Type' => 'application/json'
-        ]);
+            }
+        ] );
+
+        return $this->json( [
+            'data' => $entry,
+            'ok' => true
+        ] );
     }
 
     /**
-     * get all user timers
-     * @Route("/api/v1/entry/user/list", name="api_entry_list",methods={"POST"})
-     *  @SWG\Response(
+     * Récupère toutes les entrées
+     * @Route("entries", name="get-all",methods={"POST"})
+     * @SWG\Response(
      *     response="200",
      *     description="success",
      *)
-     * @param Request $request
+     * @param  Request  $request
      * @return Response
      */
-    public function list(Request $request)
+    public function getAll( Request $request )
     {
-        $data = $this->serializer->serialize($this->getUser()->getEntries(), 'json',[
-            'circular_reference_handler' => function ($object) {
+        $data = $this->serializer->serialize( $this->getUser()->getEntries(), 'json', [
+            'circular_reference_handler' => function( $object ) {
                 return $object->getId();
-            }]);
-        return new Response($data, 200, [
-            'Content-Type' => 'application/json'
+            }
+        ] );
+
+        return $this->json([
+            'data' => $data,
+            'ok' => true
         ]);
     }
 
     /**
-     * create new timer
-     * @Route("api/v1/entry/new",name="api_entry",methods={"POST"})
-        *  @SWG\Response(
-        *     response="200",
-        *     description="success",
-        *)
-        * @SWG\Parameter(
-        *     name="start",
-        *     type="string",
-        *     in="query",
-        *     required=true,
-        * )
-        * @SWG\Parameter(
-        *     name="end",
-        *     type="string",
-        *     in="query",
-        *     required=true,
-        * )
-        * @SWG\Parameter(
-        *     name="project_id",
-        *     type="integer",
-        *     in="query",
-        *     required=true,
-        * )
-     * @param Request $request
+     * Ajoute une nouvelle entrée
+     * @Route("entry/new",name="new",methods={"POST"})
+     * @SWG\Response(
+     *     response="200",
+     *     description="success",
+     *)
+     * @SWG\Parameter(
+     *     name="start",
+     *     type="string",
+     *     in="query",
+     *     required=true,
+     * )
+     * @SWG\Parameter(
+     *     name="end",
+     *     type="string",
+     *     in="query",
+     *     required=true,
+     * )
+     * @SWG\Parameter(
+     *     name="project_id",
+     *     type="integer",
+     *     in="query",
+     *     required=true,
+     * )
+     * @param  Request  $request
      * @return Response
      */
-    public function new(Request $request){
-        $start = $this->em->query->get('start');
-        $end = $this->em->query->get('end');
-        $project_id= $this->em->query->get('project_id');
-        $project = $this->em-getRepository(Project::class)->find($project_id);
+    public function new( Request $request )
+    {
+        $start = $this->em->query->get( 'start' );
+        $end = $this->em->query->get( 'end' );
+        $project_id = $this->em->query->get( 'project_id' );
+        $project = $this->em->getRepository( Project::class )->find( $project_id );
 
         $entry = new Entry();
-        $entry->setStartsAt($start);
-        $entry->setEndsAt($end);
-        $this->em->persist($entry);
+        $entry->setStartsAt( $start );
+        $entry->setEndsAt( $end );
+        $this->em->persist( $entry );
         $this->em->flush();
 
-        $this->getUser()->addEntry($entry);
-        $project->addEntry($entry);
-        $this->em->persist($this->getUser());
-        $this->em->persist($project);
+        $this->getUser()->attachEntry( $entry );
+        $project->addEntry( $entry );
+        $this->em->persist( $this->getUser() );
+        $this->em->persist( $project );
         $this->em->flush();
-        $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
-        return new Response($data, 200, [
-            'Content-Type' => 'application/json'
+
+        return $this->json([
+            'message' => 'Temps de travail enregistrée !',
+            'ok' => true
         ]);
     }
 
 
     /**
-     * update timer end
-     * @Route("api/v1/update/entry",name="api_update_entry",methods={"PUT"})
-     *  @SWG\Response(
+     * Met à jour un temps de travail
+     * @Route("entry/update",name="update",methods={"PUT"})
+     * @SWG\Response(
      *     response="200",
      *     description="success",
      *)
@@ -147,20 +164,22 @@ class APIEntryController extends AbstractController
      *     in="query",
      *     required=true,
      * )
-     * @param Request $request
+     * @param  Request  $request
      * @return Response
      */
-    public function updateEntry(Request $request){
+    public function update( Request $request )
+    {
 
-        $end = $request->query->get('end');
-        $id = $request->query->get('entry_id');
-        $entry = $this->em->getRepository(Entry::class)->find($id);
-        $entry->setEndsAt($end);
-        $this->em->persist($entry);
+        $end = $request->query->get( 'end' );
+        $id = $request->query->get( 'entry_id' );
+        $entry = $this->em->getRepository( Entry::class )->find( $id );
+        $entry->setEndsAt( $end );
+        $this->em->persist( $entry );
         $this->em->flush();
-        $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
-        return new Response($data, 200, [
-            'Content-Type' => 'application/json'
+
+        return $this->json([
+            'message' => 'Temps de travail mis à jour !',
+            'ok' => true
         ]);
     }
 

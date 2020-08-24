@@ -51,7 +51,7 @@ class FakerFixtures extends Fixture
             $entry = new Entry();
             $entry->setStartsAt($faker->dateTime);
             $entry->setEndsAt($faker->dateTime);
-            $user->addEntry($entry);
+            $user->attachEntry($entry);
             $project->addEntry($entry);
 
             $manager->persist($entry);
