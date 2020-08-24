@@ -12,8 +12,8 @@ use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields={"email"}, message="ce mail existe !")
- * @UniqueEntity(fields={"pseudo"}, message="Ce pseudo est déja pris !")
+ * @UniqueEntity(fields={"email"}, message="Un utilisateur avec cet adresse mail existe déjà.")
+ * @UniqueEntity(fields={"pseudo"}, message="Un utilisateur avec ce pseudo existe déjà.")
  */
 
 class User implements UserInterface
@@ -46,7 +46,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=100)
      *@Assert\Email(
-     * message = "The email '{{ value }}' is not a valid email."
+     * message = "Adresse mail '{{ value }}' invalide."
      * )
      */
     private $email;
@@ -65,7 +65,7 @@ class User implements UserInterface
      * @ORM\Column(type="string")
      * @Assert\Length(
      *      min = 2,
-     *      minMessage = "Your Password must be at least {{ limit }} characters long",
+     *      minMessage = "Votre mot de passe doit au moins contenir {{ limit }} caractères.",
      * )
      */
     private $password;
