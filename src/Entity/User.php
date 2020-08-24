@@ -247,8 +247,8 @@ class User implements UserInterface
 
     public function removeUserGroup(GroupUsers $userGroup): self
     {
-        if ($this->userGroups->contains($userGroup)) {
-            $this->userGroups->removeElement($userGroup);
+        if ($this->groups->contains($userGroup)) {
+            $this->groups->removeElement($userGroup);
         }
 
         return $this;

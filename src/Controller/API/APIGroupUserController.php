@@ -95,22 +95,7 @@ class APIGroupUserController extends AbstractController
     public function list(Request $request)
     {
 
-          $user = $this->getUser();
-          $groups = $this->em->getRepository(GroupUsers::class)->findAll();
-          $yes = false;
-          foreach($groups as $key=>$value){
-           foreach($value->getUsers() as $val ){
-
-                if($user == $val){
-                    // unset($groups[$key]);
-                    $yes = true;
-                }
-           }
-           if(!$yes){
-            unset($groups[$key]);
-           }
-          }
-          $data = $this->serializer->serialize($this->getUser()->getUserGroups(), 'json',[
+          $data = $this->serializer->serialize($this->getUser()->getGroups(), 'json',[
               'circular_reference_handler' => function ($object) {
                   return $object->getId();
               }]);

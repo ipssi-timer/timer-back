@@ -3,7 +3,9 @@
 namespace App\Controller\API;
 
 use App\Entity\Entry;
+use App\Entity\Project;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Client\Curl\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,6 +53,25 @@ class APIEntryController extends AbstractController
     }
 
     /**
+     * @Route("/api/v1/entry/user/list", name="api_entry_list",methods={"POST"})
+     *  @SWG\Response(
+     *     response="200",
+     *     description="success",
+     *)
+
+     */
+    public function list(Request $request)
+    {
+        $data = $this->serializer->serialize($this->getUser()->getEntries(), 'json',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }]);
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+
+    /**
      * @Route("api/v1/entry/new",name="api_entry",methods={"POST"})
         *  @SWG\Response(
         *     response="200",
@@ -84,10 +105,12 @@ class APIEntryController extends AbstractController
         $entry = new Entry();
         $entry->setStartsAt($start);
         $entry->setEndsAt($end);
-        $entry->setUser($this->getUser());
-        $entry->setProject($project);
         $this->em->persist($entry);
+        $this->em->flush();
+
+        $this->getUser()->addEntry($entry);
         $project->addEntry($entry);
+        $this->em->persist($this->getUser());
         $this->em->persist($project);
         $this->em->flush();
         $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
