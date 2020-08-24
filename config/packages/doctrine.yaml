@@ -1,6 +1,5 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
         url: 'mysql://%env(resolve:MYSQL_USER)%:%env(resolve:MYSQL_PASSWORD)%}@%env(resolve:MYSQL_HOST)%:%env(resolve:MYSQL_PORT)%/%env(resolve:MYSQL_DATABASE)%'
 
         # IMPORTANT: You MUST configure your server version,
