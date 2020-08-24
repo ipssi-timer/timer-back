@@ -20,15 +20,27 @@
         <li>id : {{ group.id }} <br>
             creator id : {{ group.creatorId }} <br>
             name : {{ group.getName }} <br>
-          membres : {% for user in  group.getUsers %}
-
-
-            {{ user.pseudo  }}
-            {%  if group.creatorId == user.id %}
-              (ADMIN)
-            {% endif %}
+             membres : {% for user in  group.users %}
+                       {% if user.id is defined  %}
+                            {{ user.pseudo  }}
+                            {%  if group.creatorId == user.id %}
+                              (ADMIN)
+                            {% endif %}
+                       {% endif %}
             ---
-          {% endfor %}
+                       {% endfor %}
+           <br>
+            projects : {% for project in  group.projects %}
+                        {% if project.id is defined  %}
+
+                        {{ project.id  }}
+                            {%  if project.creator == app.user.id %}
+                                (ADMIN)
+                            {% endif %}
+                            ---{{ project.name }}
+                        {% endif %}
+                        ---
+                      {% endfor %}
         </li>
 
 

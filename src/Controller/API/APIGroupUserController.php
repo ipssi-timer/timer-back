@@ -11,6 +11,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -21,18 +25,44 @@ class APIGroupUserController extends AbstractController
   private $em;
   private $serializer;
   private $validator;
+  private $encoders;
+  private $normalizers;
+
 
 
     public function __construct(EntityManagerInterface $entityManager,SerializerInterface $serializer,ValidatorInterface $validator){
 
         $this->em = $entityManager;
-        $this->serializer = $serializer;
         $this->validator = $validator ;
+        $this->encoders = array(new XmlEncoder(), new JsonEncoder());
+        $this->normalizers = array(new ObjectNormalizer());
+        $this->serializer = new Serializer($this->normalizers, $this->encoders);
+
+
 
     }
 
-  /**
-   * @Route("/api/v1/group", name="groupUser_get", methods={"POST"})
+    /**
+     * @Route("/api/v1/groups/list", name="group_list_get", methods={"POST"})
+     *
+     */
+    public function groupsList(Request $request)
+    {
+        $group = $this->em->getRepository(GroupUsers::class)->findAll();
+        $data = $this->serializer->serialize($group, 'json',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }]);
+
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+
+
+
+    /**
+   * @Route("/api/v1/group/edit", name="groupUser_get", methods={"POST"})
    *
    * @SWG\Response(
    *     response="200",
@@ -49,12 +79,32 @@ class APIGroupUserController extends AbstractController
     {
           $id = $request->query->get('id');
           $group = $this->em->getRepository(GroupUsers::class)->find($id);
-          $data = $this->serializer->serialize($group, 'json');
+          $data = $this->serializer->serialize($group, 'json',[
+              'circular_reference_handler' => function ($object) {
+                  return $object->getId();
+          }]);
 
           return new Response($data, 200, [
             'Content-Type' => 'application/json'
           ]);
     }
+
+ /**
+   * @Route("/api/v1/group/user/list", name="group_user_list", methods={"POST"})
+   */
+    public function list(Request $request)
+    {
+
+          $data = $this->serializer->serialize($this->getUser()->getGroups(), 'json',[
+              'circular_reference_handler' => function ($object) {
+                  return $object->getId();
+              }]);
+
+          return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+          ]);
+    }
+
 
   /**
    * @Route("api/v1/group/new",name="groupUser_new", methods={"POST"})

@@ -29,7 +29,7 @@ class GroupUsers
     private $creator_id;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="userGroups")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="groups")
      */
     private $users;
 
@@ -87,7 +87,7 @@ class GroupUsers
     {
         $this->users[] = $user;
         dump($this->users);
-        $user->addUserGroup($this);
+        $user->joinGroup($this);
 
 
         return $this;
