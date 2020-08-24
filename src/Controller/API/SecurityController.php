@@ -21,16 +21,15 @@ use FOS\RestBundle\Controller\Annotations\QueryParam;
 use Swagger\Annotations as SWG;
 
 
-
 /**
- * @Route("/api/login")
+ * @Route("/api/v1/", requirements={"_locale": "en|es|fr"}, name="api_auth_")
  */
 class SecurityController extends AbstractController
 {
 
     /**
-     * @Route("", name="api_login", methods={"POST"})
-     *@SWG\Response(
+     * @Route("login", name="login", methods={"POST"})
+     * @SWG\Response(
      *     response="400",
      *     description="Bad data",
      *)
@@ -46,15 +45,14 @@ class SecurityController extends AbstractController
      *     in="query",
      *     required=true,
      * )
-
      */
-    public function login(Request $request)
+    public function login( Request $request )
     {
         $user = $this->getUser();
-        return $this->json([
-            //'username' => $user->getUsername(),
-            // 'roles' => $user->getRoles()
-            'user' => $user
-        ]);
+        return $this->json( [
+            'message' => "Utilisateur connecté !",
+            'ok' => true
+        ] );
     }
+
 }
