@@ -37,7 +37,7 @@ class GroupUsersController extends AbstractController
     public function index()
     {
         $groups = $this->groupRepository->findAll();
-        return $this->render('group/index.html.twig', [
+        return $this->render('admin/index.html.twig', [
             'groups' => $groups,
         ]);
     }

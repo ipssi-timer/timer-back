@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+
+    <div class="example-wrapper">
+        <ul>
+            <p>Interface d'administration</p>
+
+            <ul>
+                <li><a href="{{ path('admin_listusers') }}">Accéder aux utilisateurs</a></li>
+                <li><a href="{{ path('admin_listgroups') }}">Accéder aux groupes</a></li>
+                <li><a href="{{ path('admin_listprojects') }}">Accéder aux projets</a></li>
+            </ul>
+
+
+
+        </ul>
+
+    </div>
+
+{% endblock %}
