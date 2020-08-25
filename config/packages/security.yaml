@@ -21,7 +21,7 @@ security:
                 check_path: /api/login
             guard:
                 authenticators:
-                    - App\Security\APIUserAuthAuthenticator
+                    - App\Security\AppUserAuthAuthenticator
             logout:
                 path: app_logout
                 # where to redirect after logout

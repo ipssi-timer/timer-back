@@ -2,8 +2,11 @@
 
 namespace App\Security;
 
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -25,22 +28,35 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $api ;
 
     public function __construct(UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->api = false;
     }
 
     public function supports(Request $request)
     {
+        if('api_login' === $request->attributes->get('_route') && $request->isMethod('POST')){
+            $this->api = true;
+            return 'api_login' === $request->attributes->get('_route') && $request->isMethod('POST');
+        }
         return 'app_login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
 
     public function getCredentials(Request $request)
     {
+        if('api_login' === $request->attributes->get('_route') && $request->isMethod('POST')) {
+            $credentials = [
+                'email' => $request->query->get('email'),
+                'password' => $request->query->get('password'),
+            ];
+            return $credentials;
+        }
         $credentials = [
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
@@ -56,6 +72,13 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
+        // dump($credentials);die;
+        if($this->api) {
+
+            return $userProvider->loadUserByUsername($credentials['email']);
+
+
+        }
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
@@ -88,12 +111,18 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-
+        if($this->api) {
+            $data = [
+                'status' => 200,
+                'message' => 'connect'
+            ];
+            return new JsonResponse($data, 201);
+        }
         if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('profile'));
+        return new RedirectResponse($this->urlGenerator->generate('user_profile'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 

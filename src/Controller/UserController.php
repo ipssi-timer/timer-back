@@ -50,6 +50,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/list", name="list")
+     *@IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function usersList()
     {
@@ -98,6 +99,19 @@ class UserController extends AbstractController
     public function delete (User $user, EntityManagerInterface $entityManager)
     {
         $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('success', "the user has been deleted");
+        return $this->redirectToRoute('user_list');
+
+    }
+
+    /**
+     * @Route("/delete_user/", name="delete")
+     *@IsGranted("IS_AUTHENTICATED_FULLY")
+     */
+    public function deleteAccount (EntityManagerInterface $entityManager)
+    {
+        $entityManager->remove($this->getUser());
         $entityManager->flush();
         $this->addFlash('success', "the user has been deleted");
         return $this->redirectToRoute('user_list');
