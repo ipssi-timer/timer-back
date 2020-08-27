@@ -61,6 +61,65 @@ class APIGroupUserController extends AbstractController
         ]);
     }
 
+    /**
+     * get owned groups
+     * @Route("/api/v1/user/groups/owned", name="onwed_group_list_get", methods={"POST"})
+     *@param Request $request
+     *@return Response
+     */
+    public function groupsOwned(Request $request)
+    {
+        $groups = $this->em->getRepository(GroupUsers::class)->findAll();
+        foreach ($groups as $key=>$group){
+            if($group->getCreatorId() != $this->getUser()->getId()){
+                unset($groups[$key]);
+            }
+        }
+        $data = $this->serializer->serialize($groups, 'json',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }]);
+
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+
+    /**
+     * get owned groups
+     * @Route("/api/v1/user/groups/joined", name="joined_group_list_get", methods={"POST"})
+     *@param Request $request
+     *@return Response
+     */
+    public function groupsJoined(Request $request)
+    {
+        $groups = $this->em->getRepository(GroupUsers::class)->findAll();
+        foreach ($groups as $key=>$group){
+            $is = false;
+            if($group->getCreatorId() == $this->getUser()->getId()){
+                unset($groups[$key]);
+                continue;
+            }
+            foreach ($group->getUsers() as $user){
+                if($user == $this->getUser()){
+                    $is = true;
+                }
+            }
+            if(!$is){
+                unset($groups[$key]);
+            }
+        }
+        $data = $this->serializer->serialize($groups, 'json',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }]);
+
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+
+
 
 
     /**
