@@ -51,10 +51,18 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
     public function getCredentials(Request $request)
     {
         if('api_login' === $request->attributes->get('_route') && $request->isMethod('POST')) {
+            if(!empty($request->query->get('email') )){
             $credentials = [
                 'email' => $request->query->get('email'),
                 'password' => $request->query->get('password'),
             ];
+            }
+            else{
+                $credentials = [
+                    'email' => $request->request->get('email'),
+                    'password' => $request->request->get('password'),
+                ];
+            }
             return $credentials;
         }
         $credentials = [
@@ -74,7 +82,6 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
     {
         // dump($credentials);die;
         if($this->api) {
-
             return $userProvider->loadUserByUsername($credentials['email']);
 
 
