@@ -23,7 +23,7 @@ use Swagger\Annotations as SWG;
 
 
 /**
- * @Route("/api/login")
+ * @Route("/api/v1/login")
  */
 class SecurityController extends AbstractController
 {
