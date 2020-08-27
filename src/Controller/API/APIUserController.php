@@ -66,7 +66,7 @@ class APIUserController extends AbstractController
 
   /**
    * create new user
-   * @Route("api/v1/user/new", name="new",methods={"POST"})
+   * @Route("api/v1/user/register", name="new",methods={"POST"})
    *  @SWG\Response(
    *     response="200",
    *     description="success",
@@ -150,7 +150,7 @@ class APIUserController extends AbstractController
       $this->em->persist($user);
       $this->em->flush();
 
-    $data = $this->serializer->serialize(array('message'=>'OK'), 'json');
+    $data = $this->serializer->serialize(array('data'=>$user->getId()), 'json');
     return new Response($data, 200, [
       'Content-Type' => 'application/json'
     ]);

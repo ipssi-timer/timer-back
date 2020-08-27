@@ -120,8 +120,7 @@ class AppUserAuthAuthenticator extends AbstractFormLoginAuthenticator implements
     {
         if($this->api) {
             $data = [
-                'status' => 200,
-                'message' => 'connect'
+                'data' => $token->getUser()->getId(),
             ];
             return new JsonResponse($data, 201);
         }

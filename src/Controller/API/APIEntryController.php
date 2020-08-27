@@ -29,7 +29,7 @@ class APIEntryController extends AbstractController
   }
     /**
      * get one timer information
-     * @Route("/api/v1/entry/index", name="a_p_i_entry",methods={"POST"})
+     * @Route("/api/v1/project/entry/show", name="a_p_i_entry",methods={"POST"})
      *  @SWG\Response(
      *     response="200",
      *     description="success",
@@ -46,6 +46,35 @@ class APIEntryController extends AbstractController
     public function index(Request $request)
     {
         $entry = $this->em->getRepository(Entry::class)->find($request->query->get('entry_id'));
+        $data = $this->serializer->serialize($entry, 'json',[
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }]);
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+
+    /**
+     * get one timer information
+     * @Route("/api/v1/project/entries", name="a_p_i_entry",methods={"POST"})
+     *  @SWG\Response(
+     *     response="200",
+     *     description="success",
+     *)
+     * @SWG\Parameter(
+     *     name="project_id",
+     *     type="integer",
+     *     in="query",
+     *     required=true,
+     * )
+     * @param Request $request
+     * @return Response
+     */
+    public function indexentries(Request $request)
+    {
+        $project = $this->em->getRepository(Entry::class)->find($request->query->get('project_id'));
+        $entry = $this->em->getRepository(Entry::class)->findByProject($project);
         $data = $this->serializer->serialize($entry, 'json',[
             'circular_reference_handler' => function ($object) {
                 return $object->getId();
@@ -78,7 +107,7 @@ class APIEntryController extends AbstractController
 
     /**
      * create new timer
-     * @Route("api/v1/entry/new",name="api_entry",methods={"POST"})
+     * @Route("api/v1/project/entry/save",name="api_entry",methods={"POST"})
         *  @SWG\Response(
         *     response="200",
         *     description="success",
@@ -130,7 +159,7 @@ class APIEntryController extends AbstractController
 
     /**
      * update timer end
-     * @Route("api/v1/update/entry",name="api_update_entry",methods={"PUT"})
+     * @Route("api/v1/project/entry/update",name="api_update_entry",methods={"PUT"})
      *  @SWG\Response(
      *     response="200",
      *     description="success",
