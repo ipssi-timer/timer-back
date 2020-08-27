@@ -36,6 +36,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
+     * get one project informations
      * @Route("/api/v1/project", name="project_get", methods={"POST"})
      *
      * @SWG\Response(
@@ -69,6 +70,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
+     * get all projects via groups
      * @Route("/api/v1/project/group/list", name="project_group_list", methods={"POST"})
      */
     public function list()
@@ -85,6 +87,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
+     * create new project
      * @Route("api/v1/project/new",name="api_project_new", methods={"POST"})
      *
      * @SWG\Response(
@@ -140,6 +143,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
+     * delete project
      * @Route("api/v1/project/delete", name="project_delete", methods={"DELETE"})
      * @SWG\Response(
      *     response="200",
@@ -167,6 +171,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
+     * update project name
      * @Route("api/project/updateName",name="project_update_name",methods={"POST"})
      *  @SWG\Response(
      *     response="200",
@@ -206,6 +211,7 @@ class APIProjectController extends AbstractController
     }
 
     /**
+     * update project description
      * @Route("api/project/updateDescription",name="project_update_description",methods={"POST"})
      *  @SWG\Response(
      *     response="200",

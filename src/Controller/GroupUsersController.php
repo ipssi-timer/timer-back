@@ -37,20 +37,20 @@ class GroupUsersController extends AbstractController
     public function index()
     {
         $groups = $this->groupRepository->findAll();
-        return $this->render('admin/index.html.twig', [
+        return $this->render('group/index.html.twig', [
             'groups' => $groups,
         ]);
     }
 
    /**
-     * @Route("/new/{id}",name="new")
+     * @Route("/new",name="new")
     */
-    public function new ($id,Request $request){
+    public function new (Request $request){
       $group = new GroupUsers();
       $form = $this->createForm(GroupUsersType::class,$group);
       $form->handleRequest($request);
       if($form->isSubmitted() && $form->isValid()){
-         $group->setCreatorId($id);
+         $group->setCreatorId($this->getUser()->getId());
         dump($group->getUsers()->getValues());
         foreach($group->getUsers()->getValues() as $user){
           $group->addUser($user);
@@ -63,7 +63,7 @@ class GroupUsersController extends AbstractController
         return $this->redirectToRoute('group_list');
       }
 
-      return $this->render('user/new.html.twig', [
+      return $this->render('group/new.html.twig', [
         'form' => $form->createView(),
       ]);
     }
@@ -110,7 +110,7 @@ class GroupUsersController extends AbstractController
 
             return $this->redirectToRoute('group_list');
           }
-          return $this->render('user/new.html.twig', [
+          return $this->render('group/new.html.twig', [
             'form' => $form->createView(),
           ]);
   }

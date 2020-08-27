@@ -7,6 +7,8 @@ use App\Entity\Project;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class ProjectType extends AbstractType
 {
@@ -22,7 +24,7 @@ class ProjectType extends AbstractType
                     return $group->getName();
                 }
             ])
-            ->add('creator_id')
+            ->add('creator')
             ->add('submit',SubmitType::class)
         ;
 

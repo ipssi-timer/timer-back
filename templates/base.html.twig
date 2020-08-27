@@ -5,12 +5,26 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
-
-    <a href="{{ path('user_list') }}">user list</a>
-    <a href="{{ path('group_list') }}">group list</a>
-
-    <a href="{{ path('admin') }}">Gestion</a>
-
+    <style>
+        .listnav {display: flex; border-bottom: 1px solid black; padding-bottom: 15px}
+        .listnav li {margin-right: 10px; list-style-type: none}
+        .listnav a {text-decoration: none}
+        #deco{margin-left: auto}
+        #deco a {margin-left: 10px}
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    </style>
+    <ul class="listnav">
+    <li><a href="{{ path('user_list') }}">Utilisateurs</a></li>
+    <li><a href="{{ path('group_list') }}">Groupes</a></li>
+    <li><a href="{{ path('project_list') }}">Projets</a></li>
+    {% if is_granted('ROLE_ADMIN') %}
+    <li><a href="{{ path('admin') }}">Gestion admin</a></li>
+    {% endif %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <li id="deco">Connecté : {{ app.user.firstname }}<a href="{{ path('app_logout') }}">Déconnexion</a></li>
+    {% endif %}
+    </ul>
 
     <body>
     {% block body %}{% endblock %}

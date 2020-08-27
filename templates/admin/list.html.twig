@@ -21,8 +21,8 @@
                                     {% endif %}
                                     {% endfor %}
                 </li>
-                <li><a href="{{ path('project_update',{'id': group.id}) }}">Modifier</a></li>
-                <li><a href="{{ path('project_delete',{'id': group.id}) }}">Supprimer</a></li>
+                <li><a href="{{ path('group_update',{'id': group.id}) }}">Modifier</a></li>
+                <li><a href="{{ path('group_delete',{'id': group.id}) }}">Supprimer</a></li>
                 </ul>
                 </div>
             {% endfor %}
